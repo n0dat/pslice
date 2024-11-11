@@ -1,2 +1,3 @@
 *.pyproject
 *.pyproject.user
+*.pyc
