@@ -1,4 +1,4 @@
-from treemodel import TreeModel
+from lib.treemodel import TreeModel
 import datetime
 import sys
 from PySide6.QtWidgets import QWidget

@@ -4,7 +4,7 @@ import faulthandler
 from PySide6.QtWidgets import QApplication, QWidget
 
 # customs
-import util
+import lib.util as util
 from generate import Parser
 
 faulthandler.enable()
