@@ -32,20 +32,21 @@ class Parser:
 
     def parseDict(self, value, parent):
         for key in value:
+            print(key, '', value[key], '', type(value[key]))
             self.parse(key, value[key], parent)
 
     def parse(self, key, value, parent):
         if isinstance(value, str):
             self.parseString(key, value, parent)
             
+        elif isinstance(value, bool):
+            self.parseBool(key, value, parent)
+            
         elif isinstance(value, int):
             self.parseInt(key, value, parent)
             
         elif isinstance(value, float):
             self.parseReal(key, value, parent)
-            
-        elif isinstance(value, bool):
-            self.parseBool(key, value, parent)
             
         elif isinstance(value, datetime.datetime):
             self.parseDate(key, str(value), parent)
