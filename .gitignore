@@ -2,3 +2,4 @@
 *.pyproject.user
 *.pyc
 media
+.DS_Store

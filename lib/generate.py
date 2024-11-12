@@ -24,15 +24,14 @@ class Parser:
         self.treeModel.addNode(key, "Date", value, parent)
 
     def parseData(self, key, value, parent):
-        self.treeModel.addNode(key, "Data", f'{sys.getsizeof(value)}', parent)
+        self.treeModel.addNode(key, "Data", f'{len(bytes(value))} bytes', parent)
 
     def parseArray(self, value, parent):
         for i in range(len(value)):
-            self.parse(f'Item{i}', value[i], parent)
+            self.parse(f'Item{i + 1}', value[i], parent)
 
     def parseDict(self, value, parent):
         for key in value:
-            print(key, '', value[key], '', type(value[key]))
             self.parse(key, value[key], parent)
 
     def parse(self, key, value, parent):
@@ -59,15 +58,18 @@ class Parser:
             if parent is None:
                 root = self.treeModel.invisibleRootItem()
 
-            temp = QStandardItem(key)
+            self.treeModel.addNode(key, "Array", str(len(value)), parent)
+            temp = self.treeModel.getMostRecent()
             self.parseArray(value, temp)
-            root.appendRow(temp)
             
         elif isinstance(value, dict):
-            root = self.treeModel.invisibleRootItem()
-            rootKey = QStandardItem(key)
-            self.parseDict(value, rootKey)
-            root.appendRow(rootKey)
+            root = parent
+            if parent is None:
+                root = self.treeModel.invisibleRootItem()
+
+            self.treeModel.addNode(key, "Dictionary", str(len(value)), parent)
+            temp = self.treeModel.getMostRecent()
+            self.parseDict(value, temp)
             
         else:
             print('Unknown Type:', type(value))

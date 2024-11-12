@@ -43,7 +43,6 @@ if __name__ == '__main__':
         
         parser = Parser(window)
         window.treeView.setModel(parser.parsePlist(testData()))
-        window.treeView.expandAll()
         
         window.show()
         app.exec()
