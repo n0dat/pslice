@@ -2,12 +2,14 @@ import plistlib
 import datetime
 import faulthandler
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTreeView, QMenuBar, QToolBar
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTreeView, QMenuBar, QToolBar, QHeaderView, QComboBox
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QSizePolicy
 
 # customs
 from lib.generate import Parser
+from lib.combobox import TypeComboBox
+from lib.treeview import TreeView
 
 faulthandler.enable()
 
@@ -37,13 +39,14 @@ class PSlice(QWidget):
         super().__init__(parent)
         self.treeView = None
         self.initUi()
+        self.allowEdit = False
         
 
     def initUi(self):
         self.setWindowTitle("PSlice")
 
         # create the tree view
-        self.treeView = QTreeView(self)
+        self.treeView = TreeView(self)
 
         # set layout
         layout:QVBoxLayout = QVBoxLayout(self)
@@ -51,19 +54,19 @@ class PSlice(QWidget):
         self.toolbar = QToolBar("Main Toolbar")
         
         # Add actions to the toolbar
-        action1 = QAction(QIcon(), "Test 1", self)
-        action2 = QAction(QIcon(), "Test 2", self)
-        action3 = QAction(QIcon(), "Test 3", self)
+        expandAction = QAction(QIcon(), "Expand", self)
+        collapseAction = QAction(QIcon(), "Collapse", self)
+        editAction = QAction(QIcon(), "Edit", self)
 
         # Connect actions to methods
-        action1.triggered.connect(self.on_action1_triggered)
-        action2.triggered.connect(self.on_action2_triggered)
-        action3.triggered.connect(self.on_action3_triggered)
+        expandAction.triggered.connect(self.on_expand_triggered)
+        collapseAction.triggered.connect(self.on_collapse_triggered)
+        editAction.triggered.connect(self.on_edit_triggered)
         
         # Add actions to the toolbar
-        self.toolbar.addAction(action1)
-        self.toolbar.addAction(action2)
-        self.toolbar.addAction(action3) 
+        self.toolbar.addAction(expandAction)
+        self.toolbar.addAction(collapseAction)
+        self.toolbar.addAction(editAction) 
         
         # create the menu bar
         self.menu_bar = QMenuBar(self)
@@ -92,16 +95,34 @@ class PSlice(QWidget):
         filemenu.addAction(saveaction)
         layout.setMenuBar(menubar)
 
+        # disable editing by default
+        self.treeView.setEditTriggers(QTreeView.NoEditTriggers)
+        
         self.setLayout(layout)
         
-    def on_action1_triggered(self):
-        print("Test 1 ToolBar triggered")
+    def on_expand_triggered(self):
+        print("Expand ToolBar triggered")
+        self.treeView.expandAll()
 
-    def on_action2_triggered(self):
-        print("Test 2 ToolBar triggered")
+    def on_collapse_triggered(self):
+        print("Collapse ToolBar triggered")
+        self.treeView.collapseAll()
 
-    def on_action3_triggered(self):
-        print("Test 3 ToolBar triggered")
+    def on_edit_triggered(self):
+        print("Edit ToolBar triggered")
+        if self.allowEdit:
+            self.treeView.disable_editing()
+            self.allowEdit = False
+        else:
+            self.treeView.enable_editing()
+            self.allowEdit = True
+            
+    def setModel(self, model):
+        self.treeView.setModel(model)
+        self.treeView.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.treeView.setEditTriggers(QTreeView.NoEditTriggers)
+        self.treeView.setConnect()
+        self.treeView.disable_editing()
     
 if __name__ == '__main__':
     try:
@@ -109,7 +130,7 @@ if __name__ == '__main__':
         window: PSlice = PSlice()
         
         parser = Parser(window)
-        window.treeView.setModel(parser.parsePlist(testData()))
+        window.setModel(parser.parsePlist(testData()))
         
         window.show()
         app.exec()
