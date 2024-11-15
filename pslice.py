@@ -10,6 +10,7 @@ from PySide6.QtCore import QFileInfo
 
 # customs
 from lib.generate import Parser
+from lib.treemodel import TreeModel
 from lib.treeview import TreeView
 
 faulthandler.enable()
@@ -42,7 +43,7 @@ class PSlice(QWidget):
         self.treeView: TreeView  = None
         self.allowEdit: bool = False
         self.currentFile: QFileInfo = None
-        self.plistData = dict()
+        self.parser: Parser = Parser(self)
         
         self.init_ui()
 
@@ -136,34 +137,32 @@ class PSlice(QWidget):
         
 
     def open_file_dialog(self):
-        fileDialog = QFileDialog(self)
+        fileDialog: QFileDialog = QFileDialog(self)
         fileDialog.setDirectory(os.getcwd())
         fileDialog.setFileMode(QFileDialog.FileMode.ExistingFile)
         fileDialog.setNameFilter("Property List Files (*.plist)")
         
         if fileDialog.exec() == QDialog.DialogCode.Accepted:
-            
-            selectedFile = QFileInfo(fileDialog.selectedFiles()[0])
+            selectedFile: QFileInfo = QFileInfo(fileDialog.selectedFiles()[0])
             print(f'Selected: {selectedFile.fileName()}')
             self.parsePlist(selectedFile)
-            
         else:
             print("File dialog was closed or cancelled.")
             
+
     def parsePlist(self, file: QFileInfo):
-        plistData = None
+        plistData: dict = None
         try:
             with open(file.absoluteFilePath(), 'rb') as f:
-                plistData = plistlib.load(f)
+                plistData: dict = plistlib.load(f)
         except Exception as e:
             print('Error reading plist file:', e)
             
         if plistData is not None:
-            parser = Parser(self)
-            data = parser.parsePlist(plistData)
-            print('Parsed Data\n', data)
-            self.set_model(data) 
+            model: TreeModel = self.parser.parsePlist(plistData)
+            self.set_model(model) 
         
+
 
 if __name__ == '__main__':
     try:
