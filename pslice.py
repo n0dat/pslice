@@ -154,7 +154,7 @@ class PSlice(QWidget):
         plistData: dict = None
         try:
             with open(file.absoluteFilePath(), 'rb') as f:
-                plistData: dict = plistlib.load(f)
+                plistData = plistlib.load(f)
         except Exception as e:
             print('Error reading plist file:', e)
             
