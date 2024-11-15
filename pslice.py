@@ -1,14 +1,15 @@
+import os
 import plistlib
 import datetime
 import faulthandler
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTreeView, QMenuBar, QToolBar, QHeaderView, QComboBox
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTreeView, QMenuBar, QToolBar, QHeaderView, QFileDialog, QDialog
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QSizePolicy
+from PySide6.QtCore import QFileInfo
 
 # customs
 from lib.generate import Parser
-from lib.combobox import TypeComboBox
 from lib.treeview import TreeView
 
 faulthandler.enable()
@@ -37,12 +38,16 @@ def testData() -> dict:
 class PSlice(QWidget):
     def __init__(self, parent: QWidget=None):
         super().__init__(parent)
-        self.treeView = None
-        self.initUi()
-        self.allowEdit = False
-        
 
-    def initUi(self):
+        self.treeView: TreeView  = None
+        self.allowEdit: bool = False
+        self.currentFile: QFileInfo = None
+        self.plistData = dict()
+        
+        self.init_ui()
+
+
+    def init_ui(self):
         self.setWindowTitle("PSlice")
 
         # create the tree view
@@ -73,6 +78,7 @@ class PSlice(QWidget):
         file_menu = self.menu_bar.addMenu("File")
         open_action = QAction("Open", self)
         file_menu.addAction(open_action)
+        open_action.triggered.connect(self.open_file_dialog)
         save_action = QAction("Save", self)
         file_menu.addAction(save_action)
         
@@ -100,13 +106,16 @@ class PSlice(QWidget):
         
         self.setLayout(layout)
         
+
     def on_expand_triggered(self):
         print("Expand ToolBar triggered")
         self.treeView.expandAll()
 
+
     def on_collapse_triggered(self):
         print("Collapse ToolBar triggered")
         self.treeView.collapseAll()
+
 
     def on_edit_triggered(self):
         print("Edit ToolBar triggered")
@@ -117,20 +126,52 @@ class PSlice(QWidget):
             self.treeView.enable_editing()
             self.allowEdit = True
             
-    def setModel(self, model):
+
+    def set_model(self, model):
         self.treeView.setModel(model)
         self.treeView.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.treeView.setEditTriggers(QTreeView.NoEditTriggers)
         self.treeView.setConnect()
         self.treeView.disable_editing()
-    
+        
+
+    def open_file_dialog(self):
+        fileDialog = QFileDialog(self)
+        fileDialog.setDirectory(os.getcwd())
+        fileDialog.setFileMode(QFileDialog.FileMode.ExistingFile)
+        fileDialog.setNameFilter("Property List Files (*.plist)")
+        
+        if fileDialog.exec() == QDialog.DialogCode.Accepted:
+            
+            selectedFile = QFileInfo(fileDialog.selectedFiles()[0])
+            print(f'Selected: {selectedFile.fileName()}')
+            self.parsePlist(selectedFile)
+            
+        else:
+            print("File dialog was closed or cancelled.")
+            
+    def parsePlist(self, file: QFileInfo):
+        plistData = None
+        try:
+            with open(file.absoluteFilePath(), 'rb') as f:
+                plistData = plistlib.load(f)
+        except Exception as e:
+            print('Error reading plist file:', e)
+            
+        if plistData is not None:
+            parser = Parser(self)
+            data = parser.parsePlist(plistData)
+            print('Parsed Data\n', data)
+            self.set_model(data) 
+        
+
 if __name__ == '__main__':
     try:
         app: QApplication = QApplication([])
         window: PSlice = PSlice()
         
-        parser = Parser(window)
-        window.setModel(parser.parsePlist(testData()))
+        # parser = Parser(window)
+        # window.set_model(parser.parsePlist(testData()))
         
         window.show()
         app.exec()
