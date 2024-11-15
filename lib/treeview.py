@@ -16,6 +16,7 @@ class TreeView(QTreeView):
         delegate = TypeComboBox(self.originalContent, self)
         self.setItemDelegateForColumn(1, delegate)
 
+
     def on_item_clicked(self, index):
         #print(f'SINGLE Row: {index.row()} Column: {index.column()}')
         if self.doubleIndex != None and index.row() == self.doubleIndex.row():
@@ -23,6 +24,7 @@ class TreeView(QTreeView):
             #self.printOriginal()
             self.restore(self.doubleIndex)
             self.doubleIndex = None
+
 
     def on_item_double_click(self, index):
         if index.isValid() and (index.flags() & Qt.ItemIsEditable):
@@ -33,6 +35,7 @@ class TreeView(QTreeView):
             item.setText('')
         #print(f'DOUBLE Row: {index.row()} Column: {index.column()}')
         
+
     def on_selection_changed(self, selected, deselected):
         #print('TreeView.on_selection_changed')
         for index in deselected.indexes():
@@ -40,30 +43,56 @@ class TreeView(QTreeView):
                 self.restore(index)
         self.doubleIndex = None
                 
+
     def setConnect(self):
         #print('TreeView.setConnect')
         self.selectionModel().selectionChanged.connect(self.on_selection_changed)
 
+
     def editorEvent(self, event, model, option, index):
         return False        
 
+
     def disable_editing(self):
+        def set_flags(item):
+            item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            for row in range(item.rowCount()):
+                for col in range(item.columnCount()):
+                    child = item.child(row, col)
+                    if child:
+                        set_flags(child)
+                        
+
         for row in range(self.model().rowCount()):
-            for column in range(self.model().columnCount()):
-                index = self.model().index(row, column)
-                self.model().itemFromIndex(index).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
+            for col in range(self.model().columnCount()):
+                root = self.model().item(row, col)
+                if root:
+                    set_flags(root)
+                    
                 
     def enable_editing(self):
         self.setEditTriggers(QTreeView.DoubleClicked)
+        def set_flags(item):
+            item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable)
+            for row in range(item.rowCount()):
+                for col in range(item.columnCount()):
+                    child = item.child(row, col)
+                    if child:
+                        set_flags(child)
+                        
+
         for row in range(self.model().rowCount()):
-            for column in range(self.model().columnCount()):
-                index = self.model().index(row, column)
-                self.model().itemFromIndex(index).setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled | Qt.ItemIsEditable)
-                
+            for col in range(self.model().columnCount()):
+                root = self.model().item(row, col)
+                if root:
+                    set_flags(root)
+
+
     def printOriginal(self):
         for index in self.originalContent:
             print(f'Row: {index.row()} Col: {index.column()}')
             
+
     def restore(self, index):
         if index in self.originalContent:
             item = self.model().itemFromIndex(index)
