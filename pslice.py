@@ -56,11 +56,12 @@ class PSlice(QWidget):
 
         # create the tree view
         self.treeView = TreeView(self)
+        self.treeView.setModel(None)
 
         # set layout
         layout: QVBoxLayout = QVBoxLayout(self)
 
-        self.toolbar = QToolBar("Main Toolbar")
+        self.toolBar = QToolBar("Main Toolbar")
 
         # Add actions to the toolbar
         expandAction = QAction(QIcon(), "Expand", self)
@@ -73,23 +74,23 @@ class PSlice(QWidget):
         editAction.triggered.connect(self.on_edit_triggered)
 
         # Add actions to the toolbar
-        self.toolbar.addAction(expandAction)
-        self.toolbar.addAction(collapseAction)
-        self.toolbar.addAction(editAction)
+        self.toolBar.addAction(expandAction)
+        self.toolBar.addAction(collapseAction)
+        self.toolBar.addAction(editAction)
 
         # create the menu bar
-        menubar = QMenuBar(self)
-        filemenu = menubar.addMenu("File")
-        openaction = QAction("Open", self)
-        filemenu.addAction(openaction)
-        openaction.triggered.connect(self.open_file_dialog)
-        saveaction = QAction("Save", self)
-        filemenu.addAction(saveaction)
-        layout.setMenuBar(menubar)
+        menuBar = QMenuBar(self)
+        fileMenu = menuBar.addMenu("File")
+        openAction = QAction("Open", self)
+        fileMenu.addAction(openAction)
+        openAction.triggered.connect(self.open_file_dialog)
+        saveAction = QAction("Save", self)
+        fileMenu.addAction(saveAction)
+        layout.setMenuBar(menuBar)
 
         # add widgets to vbox layout
         # layout.addWidget(self.menu_bar)
-        layout.addWidget(self.toolbar)
+        layout.addWidget(self.toolBar)
         layout.addWidget(self.treeView)
 
         # resize the window based on the tree view size
@@ -104,14 +105,23 @@ class PSlice(QWidget):
         self.setLayout(layout)
 
     def on_expand_triggered(self):
+        if self.treeView.model() is None:
+            return
+
         print("Expand ToolBar triggered")
         self.treeView.expandAll()
 
     def on_collapse_triggered(self):
+        if self.treeView.model() is None:
+            return
+
         print("Collapse ToolBar triggered")
         self.treeView.collapseAll()
 
     def on_edit_triggered(self):
+        if self.treeView.model() is None:
+            return
+
         print("Edit ToolBar triggered")
         if self.allowEdit:
             self.treeView.disable_editing()
