@@ -3,7 +3,7 @@ import plistlib
 import datetime
 import faulthandler
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTreeView, QMenuBar, QToolBar, QHeaderView, \
+from PySide6.QtWidgets import QApplication, QWidget, QMenuBar, QToolBar, QHeaderView, \
     QFileDialog, QDialog
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QSizePolicy
