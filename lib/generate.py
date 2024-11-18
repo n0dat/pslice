@@ -2,56 +2,55 @@ from lib.treemodel import TreeModel
 import datetime
 import sys
 from PySide6.QtWidgets import QWidget
-from PySide6.QtGui import QStandardItem
 
 class Parser:
     def __init__(self, parent: QWidget=None):
         self.treeModel = TreeModel(parent)
 
-    def parseString(self, key, value, parent):
+    def parse_string(self, key, value, parent):
         self.treeModel.add_node(key, "String", value, parent)
 
-    def parseInt(self, key, value, parent):
+    def parse_int(self, key, value, parent):
         self.treeModel.add_node(key, "Integer", str(value), parent)
 
-    def parseReal(self, key, value, parent):
+    def parse_real(self, key, value, parent):
         self.treeModel.add_node(key, "Real", str(value), parent)
 
-    def parseBool(self, key, value, parent):
+    def parse_bool(self, key, value, parent):
         self.treeModel.add_node(key, "Boolean", str(value), parent)
 
-    def parseDate(self, key, value, parent):
+    def parse_date(self, key, value, parent):
         self.treeModel.add_node(key, "Date", value, parent)
 
-    def parseData(self, key, value, parent):
+    def parse_data(self, key, value, parent):
         self.treeModel.add_node(key, "Data", f'{len(bytes(value))} bytes', parent)
 
-    def parseArray(self, value, parent):
+    def parse_array(self, value, parent):
         for i in range(len(value)):
             self.parse(f'Item{i + 1}', value[i], parent)
 
-    def parseDict(self, value, parent):
+    def parse_dict(self, value, parent):
         for key in value:
             self.parse(key, value[key], parent)
 
     def parse(self, key, value, parent):
         if isinstance(value, str):
-            self.parseString(key, value, parent)
+            self.parse_string(key, value, parent)
             
         elif isinstance(value, bool):
-            self.parseBool(key, value, parent)
+            self.parse_bool(key, value, parent)
             
         elif isinstance(value, int):
-            self.parseInt(key, value, parent)
+            self.parse_int(key, value, parent)
             
         elif isinstance(value, float):
-            self.parseReal(key, value, parent)
+            self.parse_real(key, value, parent)
             
         elif isinstance(value, datetime.datetime):
-            self.parseDate(key, str(value), parent)
+            self.parse_date(key, str(value), parent)
             
         elif isinstance(value, bytes):
-            self.parseData(key, value, parent)
+            self.parse_data(key, value, parent)
             
         elif isinstance(value, list):
             root = parent
@@ -60,7 +59,7 @@ class Parser:
 
             self.treeModel.add_node(key, "Array", str(len(value)), parent)
             temp = self.treeModel.get_most_recent()
-            self.parseArray(value, temp)
+            self.parse_array(value, temp)
             
         elif isinstance(value, dict):
             root = parent
@@ -69,7 +68,7 @@ class Parser:
 
             self.treeModel.add_node(key, "Dictionary", str(len(value)), parent)
             temp = self.treeModel.get_most_recent()
-            self.parseDict(value, temp)
+            self.parse_dict(value, temp)
             
         else:
             print('Unknown Type:', type(value))

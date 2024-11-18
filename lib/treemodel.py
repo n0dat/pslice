@@ -1,6 +1,7 @@
+from typing import Optional, Any
+
 from PySide6.QtGui import QStandardItemModel, QStandardItem
 from PySide6.QtWidgets import QWidget
-from typing import Optional
 
 
 class TreeModel(QStandardItemModel):
@@ -11,7 +12,7 @@ class TreeModel(QStandardItemModel):
         self.setHorizontalHeaderLabels(['Key', 'Type', 'Value'])
         self.mostRecent = None
 
-    def add_node(self, key: str, _type: str, value: str, parent: QWidget = None):
+    def add_node(self, key: str, _type: str, value: str, parent = None):
         if not parent:
             parent = self.invisibleRootItem()
 
