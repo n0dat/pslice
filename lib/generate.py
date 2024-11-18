@@ -9,22 +9,22 @@ class Parser:
         self.treeModel = TreeModel(parent)
 
     def parseString(self, key, value, parent):
-        self.treeModel.addNode(key, "String", value, parent)
+        self.treeModel.add_node(key, "String", value, parent)
 
     def parseInt(self, key, value, parent):
-        self.treeModel.addNode(key, "Integer", str(value), parent)
+        self.treeModel.add_node(key, "Integer", str(value), parent)
 
     def parseReal(self, key, value, parent):
-        self.treeModel.addNode(key, "Real", str(value), parent)
+        self.treeModel.add_node(key, "Real", str(value), parent)
 
     def parseBool(self, key, value, parent):
-        self.treeModel.addNode(key, "Boolean", str(value), parent)
+        self.treeModel.add_node(key, "Boolean", str(value), parent)
 
     def parseDate(self, key, value, parent):
-        self.treeModel.addNode(key, "Date", value, parent)
+        self.treeModel.add_node(key, "Date", value, parent)
 
     def parseData(self, key, value, parent):
-        self.treeModel.addNode(key, "Data", f'{len(bytes(value))} bytes', parent)
+        self.treeModel.add_node(key, "Data", f'{len(bytes(value))} bytes', parent)
 
     def parseArray(self, value, parent):
         for i in range(len(value)):
@@ -58,8 +58,8 @@ class Parser:
             if parent is None:
                 root = self.treeModel.invisibleRootItem()
 
-            self.treeModel.addNode(key, "Array", str(len(value)), parent)
-            temp = self.treeModel.getMostRecent()
+            self.treeModel.add_node(key, "Array", str(len(value)), parent)
+            temp = self.treeModel.get_most_recent()
             self.parseArray(value, temp)
             
         elif isinstance(value, dict):
@@ -67,8 +67,8 @@ class Parser:
             if parent is None:
                 root = self.treeModel.invisibleRootItem()
 
-            self.treeModel.addNode(key, "Dictionary", str(len(value)), parent)
-            temp = self.treeModel.getMostRecent()
+            self.treeModel.add_node(key, "Dictionary", str(len(value)), parent)
+            temp = self.treeModel.get_most_recent()
             self.parseDict(value, temp)
             
         else:

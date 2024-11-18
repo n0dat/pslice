@@ -3,3 +3,5 @@
 *.pyc
 media
 .DS_Store
+*.plist
+/.idea
