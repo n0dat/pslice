@@ -50,14 +50,14 @@ class TreeModel(QStandardItemModel):
         if isinstance(parent, Node):
             parent.add_child(headNode)
 
-            if is_parent_container(parent):
-                parent.add_next(headNode)
+            if is_parent_container(parent) and parent.childNode is not headNode:
+                parent.add_node(headNode)
 
         row = [headNode, typeNode, valueNode]
 
         parent.appendRow(row)
 
-        if self.mostRecent != row[0]:
+        if self.mostRecent is not row[0]:
             self.mostRecent = row[0]
 
         return headNode

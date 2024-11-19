@@ -2,6 +2,7 @@ from datetime import datetime
 
 from PySide6.QtGui import QStandardItem
 
+
 def data_from_type(dataType: str, value):
     data = None
     if dataType in 'Dictionary':
@@ -53,14 +54,13 @@ class Node(QStandardItem):
         self.nextNode = nextNode
         self.nodeData = data
 
-        self.isContainer = isinstance(self.data, list) or isinstance(self.data, dict)
-        self.isItem = not isinstance(self.data, list) and not isinstance(self.data, dict)
+        self.isContainer = isinstance(self.nodeData, list) or isinstance(self.nodeData, dict)
+        self.isItem = not isinstance(self.nodeData, list) and not isinstance(self.nodeData, dict)
 
     def add_child(self, newChild):
         if self.childNode is None:
-            print(f'add_child: {newChild.to_string()}')
+            print(f'add_child: {newChild.node_to_string()}')
             self.childNode = newChild
-
 
     def get_last(self, node):
         if node.nextNode is None:
@@ -69,13 +69,16 @@ class Node(QStandardItem):
             self.get_last(node.nextNode)
 
     def add_next(self, nextNode):
-        print(f'add_next: {nextNode.to_string()}')
+        print(f'add_next: {nextNode.node_to_string()}')
         self.nextNode = nextNode
 
     def add_node(self, node):
-        print(f'add_node: {node.to_string()}')
-        last = self.get_last(self.childNode)
-        last.add_next(node)
+        print(f'add_node: {node.node_to_string()}')
+        #if self.childNode is not node:
+        node.add_next(self.childNode)
+        self.childNode = node
+        # last = self.get_last(self.childNode)
+        # last.add_next(node)
 
     def update_type(self, newType: str):
         print(f'current type: {type(self.nodeData)}')
@@ -105,7 +108,8 @@ class Node(QStandardItem):
 
     def clear(self):
         print('clear()')
-        self.to_string()
+        self.node_to_string()
+        self.node_tree_string()
 
         self.parentNode = None
 
@@ -116,9 +120,11 @@ class Node(QStandardItem):
         if self.nextNode is not None:
             self.nextNode.clear()
 
+    def node_to_string(self):
+        return f'Name: {self.text()} Value: {self.nodeData} Type: {type(self.nodeData)} Container: {self.isContainer} Item: {self.isItem}'
 
-    def to_string(self):
-        print(f'Type: {type(self.nodeData)} Container: {self.isContainer} Item: {self.isItem}')
+    def node_tree_string(self):
+        return f'parent: {self.parentNode} child: {self.childNode} next: {self.nextNode}'
 
 
 class TypeNode(QStandardItem):
