@@ -155,11 +155,11 @@ class PSlice(QWidget):
         if fileDialog.exec() == QDialog.DialogCode.Accepted:
             selectedFile: QFileInfo = QFileInfo(fileDialog.selectedFiles()[0])
             print(f'Selected: {selectedFile.fileName()}')
-            self.parsePlist(selectedFile)
+            self.parse_plist(selectedFile)
         else:
             print("File dialog was closed or cancelled.")
 
-    def parsePlist(self, file: QFileInfo):
+    def parse_plist(self, file: QFileInfo):
         plistData: dict = None
         try:
             with open(file.absoluteFilePath(), 'rb') as f:

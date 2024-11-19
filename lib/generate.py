@@ -9,21 +9,27 @@ class Parser:
 
     def parse_string(self, key, value, parent):
         self.treeModel.add_node(key, "String", value, parent)
+        self.treeModel.add_node_full(key, 'String', value, parent)
 
     def parse_int(self, key, value, parent):
         self.treeModel.add_node(key, "Integer", str(value), parent)
+        self.treeModel.add_node_full(key, 'Integer', value, parent)
 
     def parse_real(self, key, value, parent):
         self.treeModel.add_node(key, "Real", str(value), parent)
+        self.treeModel.add_node_full(key, 'Real', value, parent)
 
     def parse_bool(self, key, value, parent):
         self.treeModel.add_node(key, "Boolean", str(value), parent)
+        self.treeModel.add_node_full(key, 'Boolean', value, parent)
 
     def parse_date(self, key, value, parent):
         self.treeModel.add_node(key, "Date", value, parent)
+        self.treeModel.add_node_full(key, 'Date', value, parent)
 
     def parse_data(self, key, value, parent):
         self.treeModel.add_node(key, "Data", f'{len(bytes(value))} bytes', parent)
+        self.treeModel.add_node_full(key, 'Data', value, parent)
 
     def parse_array(self, value, parent):
         for i in range(len(value)):
@@ -58,6 +64,7 @@ class Parser:
                 root = self.treeModel.invisibleRootItem()
 
             self.treeModel.add_node(key, "Array", str(len(value)), parent)
+            self.treeModel.add_node_full(key, 'Array', value, parent)
             temp = self.treeModel.get_most_recent()
             self.parse_array(value, temp)
             
@@ -67,6 +74,7 @@ class Parser:
                 root = self.treeModel.invisibleRootItem()
 
             self.treeModel.add_node(key, "Dictionary", str(len(value)), parent)
+            self.treeModel.add_node_full(key, 'Dictionary', value, parent)
             temp = self.treeModel.get_most_recent()
             self.parse_dict(value, temp)
             

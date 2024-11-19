@@ -1,7 +1,4 @@
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QTreeView, QMenuBar, QToolBar, QHeaderView, QComboBox, QStyledItemDelegate, QStyle, QStyleOptionViewItem
-from PySide6.QtGui import QAction, QIcon
-from PySide6.QtWidgets import QTreeView, QVBoxLayout, QSizePolicy
-from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget, QComboBox, QStyledItemDelegate
 
 box_types = ['Dictionary', 'Array', 'Boolean', 'Date', 'Data', 'Integer', 'Real', 'String']
 
