@@ -9,6 +9,7 @@ from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QSizePolicy
 from PySide6.QtCore import QFileInfo
 
+from lib import nodetree
 # customs
 from lib.generate import Parser
 from lib.treemodel import TreeModel
@@ -137,6 +138,7 @@ class PSlice(QWidget):
 
         # set new model
         self.treeView.setModel(model)
+        print(nodetree.to_dict(self.treeView.model().root))
         self.treeView.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.treeView.setEditTriggers(QTreeView.NoEditTriggers)
 

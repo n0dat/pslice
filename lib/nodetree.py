@@ -47,7 +47,7 @@ def is_parent_container(parent):
 
 
 class Node(QStandardItem):
-    def __init__(self, name, parent, child, nextNode, data):
+    def __init__(self, name, parent, child, nextNode, data, isRoot=False):
         super().__init__(name)
         self.parentNode = parent
         self.childNode = child
@@ -56,6 +56,13 @@ class Node(QStandardItem):
 
         self.isContainer = isinstance(self.nodeData, list) or isinstance(self.nodeData, dict)
         self.isItem = not isinstance(self.nodeData, list) and not isinstance(self.nodeData, dict)
+
+        if not isRoot:
+            if isinstance(parent.nodeData, dict):
+                parent.nodeData[name] = data
+            elif isinstance(parent.nodeData, list):
+                parent.nodeData.append(data)
+
 
     def add_child(self, newChild):
         if self.childNode is None:
@@ -119,6 +126,8 @@ class Node(QStandardItem):
             print('child is None')
         if self.nextNode is not None:
             self.nextNode.clear()
+        else:
+            print('next is None')
 
     def node_to_string(self):
         return f'Name: {self.text()} Value: {self.nodeData} Type: {type(self.nodeData)} Container: {self.isContainer} Item: {self.isItem}'
@@ -137,3 +146,12 @@ class TypeNode(QStandardItem):
         print('update_head()')
         self.head.update_type(self.text())
         self.value.setText(str(self.head.nodeData))
+
+
+def to_dict(root: Node) -> dict:
+    tree = dict()
+
+    for key in root.nodeData.keys():
+        print(f'Key: {key} Data: {root.nodeData[key]}')
+
+    return tree

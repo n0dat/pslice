@@ -15,6 +15,8 @@ class TreeModel(QStandardItemModel):
 
         self.dataChanged.connect(self.on_data_changed)
 
+        self.root = Node('', None, None, None, dict(), True)
+
     def on_data_changed(self, index_top_left, index_bottom_right, roles):
         if roles is None or Qt.EditRole in roles:
             item = self.itemFromIndex(index_top_left)
@@ -40,12 +42,24 @@ class TreeModel(QStandardItemModel):
         pass
 
     def add_node_full(self, key:str, _type: str, value, parent=None) -> Node:
+        setToRoot = False
         if not parent:
+            setToRoot = True
             parent = self.invisibleRootItem()
 
-        headNode = Node(key, parent, None, None, data_from_type(_type, value))
+        nodeParent = parent
+        if setToRoot:
+            nodeParent = self.root
+
+        headNode = Node(key, nodeParent, None, None, data_from_type(_type, value))
         valueNode = QStandardItem(str(value))
         typeNode = TypeNode(_type, headNode, valueNode)
+
+        if setToRoot:
+            self.root.add_child(headNode)
+
+            if self.root.childNode is not headNode:
+                self.root.add_node(headNode)
 
         if isinstance(parent, Node):
             parent.add_child(headNode)
