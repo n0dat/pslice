@@ -2,6 +2,7 @@ from typing import Optional
 
 from PySide6.QtGui import QStandardItemModel, QStandardItem, Qt
 from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Signal
 
 from lib.nodetree import Node, TypeNode, ValueNode, data_from_type, is_parent_container, str_from_data
 
@@ -10,6 +11,7 @@ VALUE_COLUMN = 2
 
 
 class TreeModel(QStandardItemModel):
+    type_change_signal = Signal()
     def __init__(self, parent: QWidget = None):
         super().__init__(parent)
 
@@ -29,6 +31,7 @@ class TreeModel(QStandardItemModel):
                 print(f'Type: {type(node)}')
                 print(f'Index: {index_top_left}')
                 node.update_head()
+                self.type_change_signal.emit()
             elif index_top_left.column() == VALUE_COLUMN:
                 print('trying to change value node text')
                 if node.update_head_data():
@@ -130,8 +133,6 @@ class TreeModel(QStandardItemModel):
             parent.nodeData = dict(reversed(list(parent.nodeData.items())))
         elif isinstance(parent.nodeData, list):
             parent.nodeData = list(reversed(parent.nodeData))
-
-
 
     def get_most_recent(self) -> Optional[QStandardItem]:
         return self.mostRecent

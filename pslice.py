@@ -144,11 +144,18 @@ class PSlice(QWidget):
         self.treeView.header().setSectionResizeMode(0, QHeaderView.ResizeToContents)
         self.treeView.setEditTriggers(QTreeView.NoEditTriggers)
 
+        model.type_change_signal.connect(self.on_type_changed)
+
         # setup connections
         self.treeView.set_connections()
 
         # disable editing by default
         self.treeView.disable_editing()
+
+    def on_type_changed(self):
+        print('type changed !!!!!')
+        model: TreeModel = self.parser.parsePlist(self.treeView.model().root.nodeData)
+        self.set_model(model)
 
     def open_file_dialog(self):
         fileDialog: QFileDialog = QFileDialog(self)
@@ -174,7 +181,6 @@ class PSlice(QWidget):
         if plistData is not None:
             model: TreeModel = self.parser.parsePlist(plistData)
             self.set_model(model)
-
 
 if __name__ == '__main__':
     try:

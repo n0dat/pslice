@@ -24,6 +24,28 @@ def data_from_type(dataType: str, value):
 
     return data
 
+def default_data_from_type(dataType: str):
+    data = None
+
+    if dataType in 'Dictionary':
+        data = dict()
+    elif dataType in 'Array':
+        data = list()
+    elif dataType in 'Boolean':
+        data = bool(False)
+    elif dataType in 'Date':
+        data = datetime.now()
+    elif dataType in 'Data':
+        data = bytes(1)
+    elif dataType in 'Integer':
+        data = int(1)
+    elif dataType in 'Real':
+        data = float()
+    elif dataType in 'String':
+        data = str('')
+
+    return data
+
 
 def str_from_data(data):
     if isinstance(data, str):
@@ -115,7 +137,8 @@ class Node(QStandardItem):
         print(f'update_type() New Type: {newType}')
 
         if isinstance(self.nodeData, dict) or isinstance(self.nodeData, list):
-            self.childNode.clear()
+            if self.childNode:
+                self.childNode.clear()
 
         if newType in 'Dictionary':
             self.nodeData = dict()
@@ -124,7 +147,7 @@ class Node(QStandardItem):
         elif newType in 'Boolean':
             self.nodeData = bool(False)
         elif newType in 'Date':
-            self.nodeData = datetime.min
+            self.nodeData = datetime.now()
         elif newType in 'Data':
             self.nodeData = bytes(1)
         elif newType in 'Integer':
@@ -171,7 +194,8 @@ class TypeNode(QStandardItem):
     def update_head(self):
         print('update_head()')
         self.head.update_type(self.text())
-        self.value.setText(str(self.head.nodeData))
+        self.value.setText(str_from_data(default_data_from_type(self.text())))
+        #self.value.setText(str(self.head.nodeData))
 
     def get_type(self):
         return self.text()
@@ -215,6 +239,8 @@ class ValueNode(QStandardItem):
         elif dataType in 'String':
             print('is string')
             validType = isinstance(text, str)
+        elif dataType in 'Dictionary' or dataType in 'List':
+            return True
 
         if validType:
             print('valid type')
