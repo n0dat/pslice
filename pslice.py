@@ -123,6 +123,8 @@ class PSlice(QWidget):
         if self.treeView.model() is None:
             return
 
+        print(self.treeView.model().root.nodeData)
+
         print("Edit ToolBar triggered")
         if self.allowEdit:
             self.treeView.disable_editing()
