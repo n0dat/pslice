@@ -1,6 +1,6 @@
 from datetime import datetime
-
 from PySide6.QtGui import QStandardItem
+import re
 
 
 def data_from_type(dataType: str, value):
@@ -195,30 +195,37 @@ class ValueNode(QStandardItem):
 
         if dataType in 'Boolean':
             print("is bool")
-            validType = isinstance(text, bool)
+            validType = text == 'True' or text == 'False'
         elif dataType in 'Date':
             print("is date")
-            validType = isinstance(text, datetime)
+            try:
+                datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
+                validType = True
+            except ValueError:
+                validType = False
         elif dataType in 'Data':
             print("is data")
             validType = isinstance(text, bytes)
         elif dataType in 'Integer':
             print('is int')
-            validType = isinstance(text, int)
+            validType = re.match(r"^-?\d+$", text.strip())
         elif dataType in 'Real':
             print('is float')
-            validType = isinstance(text, float)
+            validType = re.match(r"^-?\d*\.\d+$", text.strip())
         elif dataType in 'String':
             print('is string')
             validType = isinstance(text, str)
 
         if validType:
+            print('valid type')
             typedData = data_from_type(dataType, text)
             if typedData is not None:
                 print('typed data')
                 self.head.set_data(typedData)
             else:
                 status = False
+        else:
+            status = False
 
         return status
 
