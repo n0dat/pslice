@@ -16,16 +16,6 @@ class TypeComboBox(QStyledItemDelegate):
                 box.setCurrentIndex(self.items.index(self.original_content[index]))
                 return box
         return super().createEditor(parent, option, index)
-    
-    def setEditorData(self, editor, index):
-        # item = index.model().itemFromIndex(index)
-        # print(f'Item Text: {item.text()}')
-        # try:
-        #     index = self.items.index(item.text())
-        #     editor.setCurrentIndex(index)
-        # except ValueError:
-        #     print(f'Could not find: {item.text()} in {self.items}')
-        return super().setEditorData(editor, index)
             
     def setModelData(self, editor, model, index):
         text = editor.currentText()

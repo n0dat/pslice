@@ -7,7 +7,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QMenuBar, QToolBar, QHeader
     QFileDialog, QDialog
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtWidgets import QTreeView, QVBoxLayout, QSizePolicy
-from PySide6.QtCore import QFileInfo
+from PySide6.QtCore import QFileInfo, QFile, QTextStream
 
 from lib import nodetree
 # customs
@@ -87,6 +87,11 @@ class PSlice(QWidget):
         openAction.triggered.connect(self.open_file_dialog)
         saveAction = QAction("Save", self)
         fileMenu.addAction(saveAction)
+        saveAction.triggered.connect(self.save_file_dialog)
+        saveAsAction = QAction("Save As", self)
+        fileMenu.addAction(saveAsAction)
+        saveAsAction.triggered.connect(self.save_as_file_dialog)
+
         layout.setMenuBar(menuBar)
 
         # add widgets to vbox layout
@@ -164,11 +169,23 @@ class PSlice(QWidget):
         fileDialog.setNameFilter("Property List Files (*.plist)")
 
         if fileDialog.exec() == QDialog.DialogCode.Accepted:
-            selectedFile: QFileInfo = QFileInfo(fileDialog.selectedFiles()[0])
-            print(f'Selected: {selectedFile.fileName()}')
-            self.parse_plist(selectedFile)
+            self.currentFile = QFileInfo(fileDialog.selectedFiles()[0])
+            print(f'Selected: {self.currentFile.fileName()}')
+            self.parse_plist(self.currentFile)
         else:
             print("File dialog was closed or cancelled.")
+
+    def save_file_dialog(self):
+        print('Save Selected')
+        file = QFile(self.currentFile.absoluteFilePath())
+        if file.open(QFile.WriteOnly):
+            data = plistlib.dumps(self.treeView.model().root.nodeData)
+            print('writing:', data.decode())
+            file.write(data)
+            file.close()
+
+    def save_as_file_dialog(self):
+        print('Save As Selected')
 
     def parse_plist(self, file: QFileInfo):
         plistData: dict = None

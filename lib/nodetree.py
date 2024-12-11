@@ -122,11 +122,8 @@ class Node(QStandardItem):
 
     def add_node(self, node):
         print(f'add_node: {node.node_to_string()}')
-        #if self.childNode is not node:
         node.add_next(self.childNode)
         self.childNode = node
-        # last = self.get_last(self.childNode)
-        # last.add_next(node)
 
     def set_type_node(self, node):
         self.typeNode = node
@@ -140,6 +137,7 @@ class Node(QStandardItem):
             if self.childNode:
                 self.childNode.clear()
 
+        self.nodeData = default_data_from_type(newType)
         if newType in 'Dictionary':
             self.nodeData = dict()
         elif newType in 'Array':
