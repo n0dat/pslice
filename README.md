@@ -8,5 +8,7 @@ The goal here is to create an intuitive editor.
 
 Why Python and Qt6? Well, Qt6 is the framework I have the most experience with and Python because it can be ran pretty much everywhere.
 
+See something you don't like or can be improved? I would appreciate a PR.
+
 ## Preview
 ![Image showing preview of the PSlice Window](./media/window-preview.png)
